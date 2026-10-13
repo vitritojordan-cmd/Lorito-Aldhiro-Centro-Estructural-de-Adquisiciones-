@@ -1,4 +1,4 @@
-# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran)
+# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran) → 0.11.012 (Medidor de Intensidad de Señal LCD)
 
 | Artefacto | SHA-256 |
 |---|---|
@@ -7,7 +7,8 @@
 | `lorito_aldhiro_v0_11_008_golden_0.11.tar.gz` (+ pieles SVG) | `b527c158e2a663122989c34ef7a3cc6268d83c0cbb79ae6e79ffa429f1e89eb0` |
 | `lorito_aldhiro_v0_11_009_golden_0.11.tar.gz` (+ LCD Display en cuadrícula angular) | `48d2958e1499f83ea7c8d8bd1f43de16a9ac729ba69d0a2ef3656fbfc90e8b10` |
 | `lorito_aldhiro_v0_11_010_golden_0.11.tar.gz` (+ leyendas centradas, celdas PREVI/TAU/COSANI/EXPORT, overlays del VFD de CRAC, carretes, fuente alarm clock) | `3f3bddb6e4149079a1d119c5d71fd9008e9b18e9b748d15e0e4473e7bffda319` |
-| `lorito_aldhiro_v0_11_011_golden_0.11.tar.gz` (**vigente**: + overlays solo de Lorito, letra fija, carretes vectoriales que giran, corazón, hubs retirados) | `eb3bdc6e50b92d0173298a86d156841c899bb731ca3625e01e4c4c6c54a26ad7` |
+| `lorito_aldhiro_v0_11_011_golden_0.11.tar.gz` (+ overlays solo de Lorito, letra fija, carretes vectoriales que giran, corazón, hubs retirados) | `eb3bdc6e50b92d0173298a86d156841c899bb731ca3625e01e4c4c6c54a26ad7` |
+| `lorito_aldhiro_v0_11_012_golden_0.11.tar.gz` (**vigente**: + Medidor de Intensidad de Señal LCD en lugar de la onda bamboleante) | `98d68dbbaa8c1dc5257a443b5a25d8c8eeeeea77f85880a32e7ac0cbac1a1d79` |
 
 El tarball nuevo es un snapshot íntegro del árbol, con raíz plana como el de
 partida y sin bytecode. Aplica las cinco órdenes adjuntas, todas con NO-GO
@@ -125,3 +126,41 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
   Qt 6.12.
 - **Capturas**: en [`capturas_0_11_011/`](capturas_0_11_011/). Detalle
   técnico: `gaps/GAP-085.md`, dentro del tarball.
+
+## 0.11.012 — Medidor de Intensidad de Señal LCD
+
+- **Reemplaza la onda bamboleante** de la celda inferior del LCD Display,
+  que era decorativa, por una medida real.
+  - Barras negras rectangulares, de ancho y separación uniformes, sobre una
+    base común y un fondo amarillo intenso uniforme, sin reflejos.
+  - Un grupo de barras por canal (L/R); la más nueva entra por la derecha.
+- **Motor `SignalIntensityMeterEngine`:**
+  - Escala en dBFS (de −60 a 0), con calibración AES17.
+  - Balística PPM investigada: ataque al 90 % en 10 ms y caída suave de
+    20 dB en 1,7 s, sin retención de pico.
+  - El silencio digital es un estado propio; la saturación se marca con
+    SAT.
+- **Sin tocar el audio:**
+  - El hilo de audio no dibuja, no espera a Qt, no toca disco y no toma
+    locks.
+  - Publica una instantánea inmutable (capacidad 1).
+  - REC mide antes del DSP; PLAY mide la salida audible.
+- **Estados:** REC, PLAY, SILENCIO, PAUSA, STOP, SIN DATOS y ESPERA. En
+  PAUSA y STOP no se muestra ninguna lectura vieja, y al cambiar entre REC
+  y PLAY no se arrastra telemetría.
+- **Rendimiento** (informe en `saneamiento_0_11_012/INFORME_MEDIDOR_0.11.012.md`):
+  - Motor: 39 µs por bloque de 512 frames (0,37 % del bloque).
+  - Widget: 1,2 ms por pintado (~2,9 % de CPU a 24 Hz).
+  - Memoria: +1 176 B en 30 min.
+  - Latencia visual de ≈ 50 ms en el peor caso.
+  - 0 frames perdidos y 0 underruns.
+- **Corrección preexistente:** el writer de disco contaba en un ledger
+  viejo si se llamaba `set_output()` antes de `start()`. Era el fallo
+  intermitente de la batería; ya está corregido y tiene prueba de
+  regresión.
+- **Verificación:**
+  - 831/831 pruebas, en plano y con `-W error::ResourceWarning`.
+  - Las 35 pruebas que necesitan Qt real pasan con PySide6 6.12.
+  - El tarball extraído también pasa el manifiesto y la batería completa.
+- **Capturas:** en [`capturas_0_11_012/`](capturas_0_11_012/). Detalle
+  técnico en `gaps/GAP-086.md`, dentro del tarball.
