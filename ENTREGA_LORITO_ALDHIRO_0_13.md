@@ -2,10 +2,45 @@
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_13_005_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_005_golden_0.13.tar.gz) | `a7f2488476fa621f21438270880d06850d63c74c9807da5b4cd81274e7cf7b4b` |
 | [`lorito_aldhiro_v0_13_004_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_004_golden_0.13.tar.gz) | `721211148630fee75e3a2c8ef95325af462ded5999e083aa0d5018cd8b773fc2` |
 | [`lorito_aldhiro_v0_13_001_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_001_golden_0.13.tar.gz) | `34209c74dde34a791220628d95c5ee20898c546e369962d5c5d5383e526c7f4d` |
 
 La versión sube a **0.13** al cerrar la Orden LA-GOLDEN-VIEW-SIGSEGV-019. La 0.12 quedó concluida antes de empezar, como se pidió; está en [`ENTREGA_LORITO_ALDHIRO_0_12.md`](ENTREGA_LORITO_ALDHIRO_0_12.md).
+
+## 0.13.005 — DITHER con BYPASS; carretes y corazón según el estado
+
+### Menú DSP
+
+- **APAGAR DITHER:** desaparece como interruptor del menú DSP.
+- **Submenú DITHER:** queda con **TPDF (TRIANGULAR)** y **BYPASS**, que apaga el maquillador.
+- **Posición del submenú:** como DSP está junto al borde derecho, su submenú ahora se abre a la izquierda y ya no tapa el menú.
+
+### Carretes y corazón del LCD
+
+| Estado | Carretes | Corazón |
+|---|---|---|
+| Reposo | apagados (atenuado de leyenda apagada) | apagado |
+| Captura | encendidos | encendido |
+| Pausa manual o automática (silencio) | **parpadean** entre encendido y atenuado (480 ms) | encendido |
+| Reproducción y bobinado | encendidos | apagado (el corazón es solo de la captura) |
+
+### Además
+
+- **TAU:** cada ventana atiende solo los eventos de su propio servicio. Antes, con varias ventanas en el mismo proceso, los pitidos de una podían mover la leyenda de otra.
+
+### Pruebas
+
+- **Suite completa:** 1057/1057, con 0 ResourceWarning.
+- **Qt real:** 258/258.
+- **Tarball:** verificado contra su manifiesto y con la suite completa sobre lo extraído.
+
+### Capturas ([`capturas_0_13_005/`](capturas_0_13_005/))
+
+| Archivo | Qué muestra |
+|---|---|
+| `00_estados_carretes_corazon.png` | Los seis estados en una sola lámina |
+| `01_menu_dsp_dither_bypass_2x.png` | DSP → DITHER con TPDF y BYPASS |
 
 ## 0.13.004 — Frecuencias de 44,1 a 192 kHz, motor Dither TPDF y TAU
 
