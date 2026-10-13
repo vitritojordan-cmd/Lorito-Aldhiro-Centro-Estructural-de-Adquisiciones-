@@ -1,4 +1,4 @@
-# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran) → 0.11.012 (Medidor de Intensidad de Señal LCD) → 0.11.013 (LCD fusionado)
+# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran) → 0.11.012 (Medidor de Intensidad de Señal LCD) → 0.11.013 (LCD fusionado) → 0.11.014 (PREVI · NR · Servosistemas)
 
 | Artefacto | SHA-256 |
 |---|---|
@@ -9,7 +9,8 @@
 | `lorito_aldhiro_v0_11_010_golden_0.11.tar.gz` (+ leyendas centradas, celdas PREVI/TAU/COSANI/EXPORT, overlays del VFD de CRAC, carretes, fuente alarm clock) | `3f3bddb6e4149079a1d119c5d71fd9008e9b18e9b748d15e0e4473e7bffda319` |
 | `lorito_aldhiro_v0_11_011_golden_0.11.tar.gz` (+ overlays solo de Lorito, letra fija, carretes vectoriales que giran, corazón, hubs retirados) | `eb3bdc6e50b92d0173298a86d156841c899bb731ca3625e01e4c4c6c54a26ad7` |
 | `lorito_aldhiro_v0_11_012_golden_0.11.tar.gz` (+ Medidor de Intensidad de Señal LCD en lugar de la onda bamboleante) | `98d68dbbaa8c1dc5257a443b5a25d8c8eeeeea77f85880a32e7ac0cbac1a1d79` |
-| `lorito_aldhiro_v0_11_013_golden_0.11.tar.gz` (**vigente**: + LCD fusionado, el medidor bajo el mismo cobertor vítreo; banner canónico en los módulos nuevos) | `d7af72316a8019a04cd94e23a298a1bee93909fac6b07a503998c765f9e3c860` |
+| `lorito_aldhiro_v0_11_013_golden_0.11.tar.gz` (+ LCD fusionado, el medidor bajo el mismo cobertor vítreo; banner canónico en los módulos nuevos) | `d7af72316a8019a04cd94e23a298a1bee93909fac6b07a503998c765f9e3c860` |
+| `lorito_aldhiro_v0_11_014_golden_0.11.tar.gz` (**vigente**: + Orden Golden PREVI · NR · Servosistemas, legado desconectado retirado a `legado/`) | `b77cc3d45b89749ce9455688a4de2df83559b11cd6314503a761c244c86696ec` |
 
 El tarball nuevo es un snapshot íntegro del árbol, con raíz plana como el de
 partida y sin bytecode. Aplica las cinco órdenes adjuntas, todas con NO-GO
@@ -188,3 +189,42 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
   - El tarball extraído pasa el manifiesto y la batería completa.
 - **Capturas:** en [`capturas_0_11_013/`](capturas_0_11_013/). Detalle en
   `gaps/GAP-087.md`, dentro del tarball.
+
+## 0.11.014 — Orden Golden PREVI · NR · Servosistemas (LA-GOLDEN-PREVI-NR-SERVO-016)
+
+- **Auditoría:** 24 hallazgos reproducidos sobre 0.11.013, cada uno con archivo, símbolo, línea, severidad, riesgo patrimonial y prueba de regresión. Están en `saneamiento_0_11_014/AUDITORIA_PREVI_NR_SERVO.md`, dentro del tarball.
+- **Rendimiento:** el NR y HX Pro estaban escritos en Python muestra por muestra.
+  - DNR (0,71 del tiempo real) y HX Pro (0,67) superaban el presupuesto de la captura (0,5) y apagaban el DERIVED.
+  - Ahora corren en Numba, de 24 a 33 veces más rápido, con salida bit a bit igual.
+- **Contrato DSP:**
+  - Construcción de etapas fuera del lock y del audio.
+  - Estados PREPARING → PENDING → APPLIED / FAILED confirmados por el motor.
+  - Crossfade de 10 ms sin clics y latencia constante durante la captura.
+  - `reset(motivo)`, `flush()` y `get_status()`.
+  - Subnormales y sobre-rango contados.
+  - Siete errores tipados.
+- **NR:**
+  - Catálogo por modelo y revisión: EXPERIMENTAL (Dolby B/C/S, ANRS, DNL, DNR) o DOCUMENTED_APPROXIMATION (dbx, S-ANRS). Ninguno se declara fiel.
+  - Preflight de combinaciones: DNL y DNR no codifican; HX Pro solo en el lado de grabación; la restauración no admite ENCODE ni efectos creativos.
+  - Bombeo de S-ANRS medido y declarado.
+- **Servos:**
+  - La puerta de generación ahora actúa; antes era inerte.
+  - Velocidad nula sin corriente continua.
+  - Entradas no válidas rechazadas o declaradas.
+  - Estados STARVED y FAILED.
+  - Telemetría de velocidad pedida / efectiva, jitter, tiempo de respuesta y estado de sincronización.
+- **UI:**
+  - Los errores DSP se muestran con su tipo y las celdas siguen el estado efectivo del motor.
+  - Los gestos del servo ya no pueden detener la captura.
+- **RAW-01:** la procedencia del DERIVED re-verifica el SHA-256 del RAW después del DSP e incluye versión, fecha y origen.
+- **Legado desconectado:** `lorito_reports.py` sale del paquete a `legado/`, con inventario.
+- **Verificación:**
+  - 891/891 pruebas, en plano y con `-W error::ResourceWarning`.
+  - 48/48 con Qt real.
+  - El tarball extraído pasa el manifiesto y la batería completa.
+- **Pendiente (Fase G):**
+  - Fidelidad NR contra referencias medidas.
+  - WCET en el dispositivo real.
+  - Endurance de 23 h / 50 h.
+  - Firma de QA.
+- **Detalle:** `PREVI_NR_SERVO_GOLDEN.md` y `gaps/GAP-088.md`, dentro del tarball.
