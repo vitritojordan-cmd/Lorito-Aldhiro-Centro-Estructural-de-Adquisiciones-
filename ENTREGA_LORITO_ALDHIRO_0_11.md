@@ -1,4 +1,4 @@
-# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran) → 0.11.012 (Medidor de Intensidad de Señal LCD) → 0.11.013 (LCD fusionado) → 0.11.014 (PREVI · NR · Servosistemas)
+# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran) → 0.11.012 (Medidor de Intensidad de Señal LCD) → 0.11.013 (LCD fusionado) → 0.11.014 (PREVI · NR · Servosistemas) → 0.11.015 (avance rápido y rebobinado)
 
 | Artefacto | SHA-256 |
 |---|---|
@@ -10,7 +10,8 @@
 | `lorito_aldhiro_v0_11_011_golden_0.11.tar.gz` (+ overlays solo de Lorito, letra fija, carretes vectoriales que giran, corazón, hubs retirados) | `eb3bdc6e50b92d0173298a86d156841c899bb731ca3625e01e4c4c6c54a26ad7` |
 | `lorito_aldhiro_v0_11_012_golden_0.11.tar.gz` (+ Medidor de Intensidad de Señal LCD en lugar de la onda bamboleante) | `98d68dbbaa8c1dc5257a443b5a25d8c8eeeeea77f85880a32e7ac0cbac1a1d79` |
 | `lorito_aldhiro_v0_11_013_golden_0.11.tar.gz` (+ LCD fusionado, el medidor bajo el mismo cobertor vítreo; banner canónico en los módulos nuevos) | `d7af72316a8019a04cd94e23a298a1bee93909fac6b07a503998c765f9e3c860` |
-| `lorito_aldhiro_v0_11_014_golden_0.11.tar.gz` (**vigente**: + Orden Golden PREVI · NR · Servosistemas, legado desconectado retirado a `legado/`) | `b77cc3d45b89749ce9455688a4de2df83559b11cd6314503a761c244c86696ec` |
+| `lorito_aldhiro_v0_11_014_golden_0.11.tar.gz` (+ Orden Golden PREVI · NR · Servosistemas, legado desconectado retirado a `legado/`) | `b77cc3d45b89749ce9455688a4de2df83559b11cd6314503a761c244c86696ec` |
+| `lorito_aldhiro_v0_11_015_golden_0.11.tar.gz` (**vigente**: + botones de avance rápido y rebobinado en el transporte) | `05dbc837c3fc32746040af487076bfcb73df097cadf7f8592fb7ab481a9cbfa8` |
 
 El tarball nuevo es un snapshot íntegro del árbol, con raíz plana como el de
 partida y sin bytecode. Aplica las cinco órdenes adjuntas, todas con NO-GO
@@ -228,3 +229,15 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
   - Endurance de 23 h / 50 h.
   - Firma de QA.
 - **Detalle:** `PREVI_NR_SERVO_GOLDEN.md` y `gaps/GAP-088.md`, dentro del tarball.
+
+
+## 0.11.015 — Avance rápido y rebobinado
+
+- **Botones nuevos:** ◀◀ REBOBINADO y ▶▶ AVANCE RÁPIDO en el transporte principal, a los lados de PLAY. El orden queda así: REC · PAUSA · STOP · ◀◀ · ▶ · ▶▶ · SALIDA.
+- **Disposición:** los 7 botones se compactan a 99 px de ancho cada uno (antes eran 140 px). Entre todos queda la misma separación de 5 px, y la fila ocupa la misma franja que antes.
+- **Comportamiento:**
+  - Reproduciendo, mantener pulsado = búsqueda audible a ±4×. Al soltar vuelve la velocidad del Velocista.
+  - Detenido, mantener pulsado = bobinado rápido de la posición, sin sonido.
+  - Durante la grabación están deshabilitados.
+- **Verificación:** 895/895 pruebas en plano y con `-W error::ResourceWarning`, y 52/52 con Qt real. El tarball extraído pasa el manifiesto y la batería completa.
+- **Capturas:** en [`capturas_0_11_015/`](capturas_0_11_015/). Detalle en `gaps/GAP-089.md`.
