@@ -1,10 +1,11 @@
-# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG)
+# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula)
 
 | Artefacto | SHA-256 |
 |---|---|
 | `lorito_aldhiro_v0_11_001_release_candidate_0.11.tar.gz` (partida, sin cambios) | `a18f4a89f56999acd180805fad8140061facec77f6b6fe2f144c53eeae31ce48` |
 | `lorito_aldhiro_v0_11_007_golden_0.11.tar.gz` (cinco Órdenes Golden) | `e48910c1e77905486a502e097f7e8acc2ac57b27db7ffb21f527e0e762d88fa4` |
-| `lorito_aldhiro_v0_11_008_golden_0.11.tar.gz` (**vigente**: + pieles SVG) | `b527c158e2a663122989c34ef7a3cc6268d83c0cbb79ae6e79ffa429f1e89eb0` |
+| `lorito_aldhiro_v0_11_008_golden_0.11.tar.gz` (+ pieles SVG) | `b527c158e2a663122989c34ef7a3cc6268d83c0cbb79ae6e79ffa429f1e89eb0` |
+| `lorito_aldhiro_v0_11_009_golden_0.11.tar.gz` (**vigente**: + LCD Display en cuadrícula angular) | `48d2958e1499f83ea7c8d8bd1f43de16a9ac729ba69d0a2ef3656fbfc90e8b10` |
 
 El tarball nuevo es un snapshot íntegro del árbol, con raíz plana como el de
 partida y sin bytecode. Aplica las cinco órdenes adjuntas, todas con NO-GO
@@ -50,3 +51,25 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
 - **Capturas**: en [`capturas_0_11_008/`](capturas_0_11_008/). Empezar
   por `00_comparativa_antes_despues.png`. Detalle técnico:
   `gaps/GAP-082.md`, dentro del tarball.
+
+## 0.11.009 — LCD Display en cuadrícula angular
+
+- Todas las celdas del LCD Display son ahora celdas de cuadrícula con
+  esquinas rectas. Cada leyenda pequeña ocupa el ángulo superior derecho
+  de su celda.
+- El **contómetro principal** se ancla a la esquina inferior izquierda de
+  su celda, con un padding separador de 10 px × 6 px medido sobre la tinta
+  real del texto, de modo que no toca los bordes. El texto superpuesto
+  sigue la misma regla y ya no desborda.
+- La **celda de la onda bamboleante** se elevó verticalmente: pasó de 1/4
+  a 1/2 del bloque superior.
+- El **Media Anim** se redujo al 80 % de su celda.
+- **Prueba SMV-T02 corregida**: su señal de impulsos de una muestra era
+  inválida a ratio 1,6 y la prueba fallaba de forma intermitente. Ahora usa
+  ráfagas de banda limitada. El motor no cambia.
+- **Verificación**: 760/760 pruebas, en plano y con
+  `-W error::ResourceWarning`. Las 4 pruebas nuevas de la cuadrícula se
+  ejecutan con PySide6 real.
+- **Capturas**: en [`capturas_0_11_009/`](capturas_0_11_009/). Empezar
+  por `00_comparativa_lcd_antes_despues.png`. Detalle técnico:
+  `gaps/GAP-083.md`, dentro del tarball.
