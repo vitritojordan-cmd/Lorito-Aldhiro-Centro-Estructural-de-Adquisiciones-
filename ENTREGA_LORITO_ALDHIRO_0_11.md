@@ -1,9 +1,10 @@
-# Entrega — Órdenes Golden de ingeniería sobre Lorito Aldhiro 0.11.001 → 0.11.007
+# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG)
 
 | Artefacto | SHA-256 |
 |---|---|
 | `lorito_aldhiro_v0_11_001_release_candidate_0.11.tar.gz` (partida, sin cambios) | `a18f4a89f56999acd180805fad8140061facec77f6b6fe2f144c53eeae31ce48` |
-| `lorito_aldhiro_v0_11_007_golden_0.11.tar.gz` (resultado) | `e48910c1e77905486a502e097f7e8acc2ac57b27db7ffb21f527e0e762d88fa4` |
+| `lorito_aldhiro_v0_11_007_golden_0.11.tar.gz` (cinco Órdenes Golden) | `e48910c1e77905486a502e097f7e8acc2ac57b27db7ffb21f527e0e762d88fa4` |
+| `lorito_aldhiro_v0_11_008_golden_0.11.tar.gz` (**vigente**: + pieles SVG) | `b527c158e2a663122989c34ef7a3cc6268d83c0cbb79ae6e79ffa429f1e89eb0` |
 
 El tarball nuevo es un snapshot íntegro del árbol, con raíz plana como el de
 partida y sin bytecode. Aplica las cinco órdenes adjuntas, todas con NO-GO
@@ -26,3 +27,26 @@ hardware, comparación con CRAC 0.36, escucha ciega, referencias Dolby/dbx y
 firmas.
 
 Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md`.
+
+## 0.11.008 — Pieles SVG del lienzo
+
+- **Retirado el fondo de madera pintado con Qt.** Fallaba en cada
+  repintado: importaba `QPointF` desde `QtGui`, cuando vive en `QtCore`.
+  Se sustituye por completo por el SVG de madera.
+- Los SVG se adaptan al tamaño real de cada widget y a las leyendas de
+  Lorito:
+
+| SVG | Componente de Lorito |
+|---|---|
+| Metaloric Panel (Vitreous Panel en CRAC) | visor de señal + panel de estado + duración de cinta |
+| LCD Display (VFD en CRAC) | contómetro ámbar, LED y botones de transporte |
+| Panascrub | los 3 scrubs (Escaneo, Torcedura, Velocista) |
+| Vúmetros | REC VU y PLAY VU, con escala dBFS |
+
+- **Corregido un defecto del Transport Core**: los comandos aplicados con
+  el ring lleno no llegaban a CONFIRMED.
+- **Verificación**: 756/756 pruebas, en plano y con
+  `-W error::ResourceWarning`.
+- **Capturas**: en [`capturas_0_11_008/`](capturas_0_11_008/). Empezar
+  por `00_comparativa_antes_despues.png`. Detalle técnico:
+  `gaps/GAP-082.md`, dentro del tarball.
