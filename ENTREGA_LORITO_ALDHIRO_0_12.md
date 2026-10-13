@@ -6,6 +6,8 @@
 
 La versión sube de la línea 0.11 a **0.12**, como se pidió, una vez cerrados todos los tratamientos. La línea anterior está en [`ENTREGA_LORITO_ALDHIRO_0_11.md`](ENTREGA_LORITO_ALDHIRO_0_11.md).
 
+La línea siguiente está en [`ENTREGA_LORITO_ALDHIRO_0_13.md`](ENTREGA_LORITO_ALDHIRO_0_13.md).
+
 ## 0.12.001 — Panel fusionado, menús de 4 ítems, marco de madera, FF/REW Golden y normalización Golden
 
 ### Panel fusionado
