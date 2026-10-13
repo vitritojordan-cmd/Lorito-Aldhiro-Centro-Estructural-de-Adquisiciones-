@@ -1,11 +1,12 @@
-# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula)
+# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC)
 
 | Artefacto | SHA-256 |
 |---|---|
 | `lorito_aldhiro_v0_11_001_release_candidate_0.11.tar.gz` (partida, sin cambios) | `a18f4a89f56999acd180805fad8140061facec77f6b6fe2f144c53eeae31ce48` |
 | `lorito_aldhiro_v0_11_007_golden_0.11.tar.gz` (cinco Órdenes Golden) | `e48910c1e77905486a502e097f7e8acc2ac57b27db7ffb21f527e0e762d88fa4` |
 | `lorito_aldhiro_v0_11_008_golden_0.11.tar.gz` (+ pieles SVG) | `b527c158e2a663122989c34ef7a3cc6268d83c0cbb79ae6e79ffa429f1e89eb0` |
-| `lorito_aldhiro_v0_11_009_golden_0.11.tar.gz` (**vigente**: + LCD Display en cuadrícula angular) | `48d2958e1499f83ea7c8d8bd1f43de16a9ac729ba69d0a2ef3656fbfc90e8b10` |
+| `lorito_aldhiro_v0_11_009_golden_0.11.tar.gz` (+ LCD Display en cuadrícula angular) | `48d2958e1499f83ea7c8d8bd1f43de16a9ac729ba69d0a2ef3656fbfc90e8b10` |
+| `lorito_aldhiro_v0_11_010_golden_0.11.tar.gz` (**vigente**: + leyendas centradas, celdas PREVI/TAU/COSANI/EXPORT, overlays del VFD de CRAC, carretes, fuente alarm clock) | `3f3bddb6e4149079a1d119c5d71fd9008e9b18e9b748d15e0e4473e7bffda319` |
 
 El tarball nuevo es un snapshot íntegro del árbol, con raíz plana como el de
 partida y sin bytecode. Aplica las cinco órdenes adjuntas, todas con NO-GO
@@ -73,3 +74,29 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
 - **Capturas**: en [`capturas_0_11_009/`](capturas_0_11_009/). Empezar
   por `00_comparativa_lcd_antes_despues.png`. Detalle técnico:
   `gaps/GAP-083.md`, dentro del tarball.
+
+## 0.11.010 — LCD Display: overlays del VFD de CRAC, carretes y fuente alarm clock
+
+- **Leyendas centradas**: todas las leyendas de las celdas del LCD quedan
+  centradas en su celda, en horizontal y en vertical.
+- **Celdas nuevas**: PREVI y TAU arriba, COSANI y EXPORT abajo. Se
+  encienden mientras haya un overlay de su familia en pantalla.
+- **Overlays de CRAC**: los 213 overlays del VFD display de CRAC 0.37.512
+  quedan registrados en el LCD, cada uno en su familia (PREVI 88,
+  COSANI 76, TAU 37, EXPORT 4 y sistema 8).
+  - Incluye los de SIPA, desborde de cuentavueltas, ITL y función no
+    disponible que CRAC muestra en su VFD.
+  - No se registran los mensajes internos ni los que van a CAROLAVENTOS
+    ("TU CINTA ES MUY LARGA... UPS!!", "ITL — FIN DE CINTA",
+    "AUTO-PAUSA — SILENCIO", "FUNCION NO DISPONIBLE"), ni "FnSide B": al
+    final del Lado B va "FnTape Aldh".
+- **Carretes de cassette**: el carrete y su pareja más pequeña, inclinados
+  en horizontal, en una celda invisible del ángulo superior derecho de la
+  megacelda del contómetro. No tocan ninguna leyenda.
+- **Fuente del contómetro**: pasa a ser alarm clock, la del VFD de CRAC.
+  Con la fuente anterior, la "V" de VerLcha se veía cortada.
+- **Verificación**: 781/781 pruebas, en plano y con
+  `-W error::ResourceWarning`. Las 10 que necesitan PySide6 real se
+  ejecutaron aparte con Qt 6.12.
+- **Capturas**: en [`capturas_0_11_010/`](capturas_0_11_010/). Detalle
+  técnico: `gaps/GAP-084.md`, dentro del tarball.
