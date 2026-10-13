@@ -1,4 +1,4 @@
-# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC)
+# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran)
 
 | Artefacto | SHA-256 |
 |---|---|
@@ -6,7 +6,8 @@
 | `lorito_aldhiro_v0_11_007_golden_0.11.tar.gz` (cinco Órdenes Golden) | `e48910c1e77905486a502e097f7e8acc2ac57b27db7ffb21f527e0e762d88fa4` |
 | `lorito_aldhiro_v0_11_008_golden_0.11.tar.gz` (+ pieles SVG) | `b527c158e2a663122989c34ef7a3cc6268d83c0cbb79ae6e79ffa429f1e89eb0` |
 | `lorito_aldhiro_v0_11_009_golden_0.11.tar.gz` (+ LCD Display en cuadrícula angular) | `48d2958e1499f83ea7c8d8bd1f43de16a9ac729ba69d0a2ef3656fbfc90e8b10` |
-| `lorito_aldhiro_v0_11_010_golden_0.11.tar.gz` (**vigente**: + leyendas centradas, celdas PREVI/TAU/COSANI/EXPORT, overlays del VFD de CRAC, carretes, fuente alarm clock) | `3f3bddb6e4149079a1d119c5d71fd9008e9b18e9b748d15e0e4473e7bffda319` |
+| `lorito_aldhiro_v0_11_010_golden_0.11.tar.gz` (+ leyendas centradas, celdas PREVI/TAU/COSANI/EXPORT, overlays del VFD de CRAC, carretes, fuente alarm clock) | `3f3bddb6e4149079a1d119c5d71fd9008e9b18e9b748d15e0e4473e7bffda319` |
+| `lorito_aldhiro_v0_11_011_golden_0.11.tar.gz` (**vigente**: + overlays solo de Lorito, letra fija, carretes vectoriales que giran, corazón, hubs retirados) | `eb3bdc6e50b92d0173298a86d156841c899bb731ca3625e01e4c4c6c54a26ad7` |
 
 El tarball nuevo es un snapshot íntegro del árbol, con raíz plana como el de
 partida y sin bytecode. Aplica las cinco órdenes adjuntas, todas con NO-GO
@@ -100,3 +101,27 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
   ejecutaron aparte con Qt 6.12.
 - **Capturas**: en [`capturas_0_11_010/`](capturas_0_11_010/). Detalle
   técnico: `gaps/GAP-084.md`, dentro del tarball.
+
+## 0.11.011 — LCD Display para Lorito: carretes que giran
+
+- **Overlays solo de Lorito**: el registro del LCD pasa de 213 overlays
+  del VFD de CRAC a 44. Quedan solo los de funciones que Lorito tiene:
+  - cinta, scrubs, ITL, SIPA y desborde;
+  - reducción de ruido, HX Pro, MPX y monitor;
+  - sus tres DSP PREVI;
+  - exportación y Fnc No Disp.
+  La API usa nombres de Lorito (`showLcdOverlay`, tokens `LCD_*`).
+- **Letra fija**: el contómetro, a 56 px, es la referencia y los overlays
+  usan ese mismo tamaño. Los que no caben se desplazan como marquesina en
+  vez de achicarse.
+- **Carretes sin aliasing**: tu carrete se dibuja ahora como forma
+  vectorial con antialiasing.
+- **Corazón negro** a la altura de los carretes, centrado bajo DOLBY S.
+- **Los carretes orquestan el movimiento**: la cinemática de los hubs de
+  los paneles de log y de duración de cinta se migró a los carretes, y esos
+  hubs se retiraron.
+- **Verificación**: 796/796 pruebas, en plano y con
+  `-W error::ResourceWarning`. Las 39 que necesitan PySide6 real pasan con
+  Qt 6.12.
+- **Capturas**: en [`capturas_0_11_011/`](capturas_0_11_011/). Detalle
+  técnico: `gaps/GAP-085.md`, dentro del tarball.
