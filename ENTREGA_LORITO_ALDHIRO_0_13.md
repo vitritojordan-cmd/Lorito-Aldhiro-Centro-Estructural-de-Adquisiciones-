@@ -2,11 +2,51 @@
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_13_008_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_008_golden_0.13.tar.gz) | `bd0b6f07ab24fd6d693d74a18c4681e3a34668358c70632a0aa7dc2d8d136976` |
 | [`lorito_aldhiro_v0_13_005_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_005_golden_0.13.tar.gz) | `a7f2488476fa621f21438270880d06850d63c74c9807da5b4cd81274e7cf7b4b` |
 | [`lorito_aldhiro_v0_13_004_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_004_golden_0.13.tar.gz) | `721211148630fee75e3a2c8ef95325af462ded5999e083aa0d5018cd8b773fc2` |
 | [`lorito_aldhiro_v0_13_001_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_001_golden_0.13.tar.gz) | `34209c74dde34a791220628d95c5ee20898c546e369962d5c5d5383e526c7f4d` |
 
 La versión sube a **0.13** al cerrar la Orden LA-GOLDEN-VIEW-SIGSEGV-019. La 0.12 quedó concluida antes de empezar, como se pidió; está en [`ENTREGA_LORITO_ALDHIRO_0_12.md`](ENTREGA_LORITO_ALDHIRO_0_12.md).
+
+## 0.13.008 — "Ready" como CRAC, símbolos de transporte en el LCD y leyendas del Media Anim
+
+### "Ready" en el contómetro (como CRAC)
+
+- **Cuándo:** con la interfaz en reposo, el contómetro muestra **Ready** en lugar del tiempo. Está desde el arranque y vuelve tras STOP y tras el bobinado.
+- **Prioridad:** es la más baja, así que cualquier otro aviso lo tapa (Fnc No Disp, Ff Wd > X1, Pause, Export…).
+- **Sin parpadeo:** "Ready" es fijo, como en CRAC.
+- **Cuándo se retira:** al grabar, pausar, reproducir, exportar o vaciar.
+
+### Símbolos de transporte
+
+**● REC · ❚❚ PAUSA · ■ STOP · ▶ PLAY · ◀◀ REW · ▶▶ FF**, en la franja libre entre el corazón y los carretes, del mismo tamaño y con la misma separación:
+
+| Uso | Encendido |
+|---|---|
+| Reposo, exportación, vaciado | ■ STOP (los demás inhibidos) |
+| Grabando | ● REC |
+| Pausa manual o automática | ● REC + ❚❚ PAUSA |
+| Reproduciendo | ▶ PLAY |
+| Rebobinado / avance rápido | ◀◀ / ▶▶ |
+
+### Leyendas del Media Anim
+
+- **Mismo tamaño:** "TRANSDIGITALIZANDO" va ahora al mismo tamaño que el resto (10 px), igual que READY, BREAK, LORITEANDO y VACIADO.
+- **Ancho:** el Media Anim ocupa todo el ancho de su celda. Los íconos no cambian.
+
+### Pruebas
+
+- **Suite completa:** 1065/1065, con 0 ResourceWarning.
+- **Qt real:** 266/266.
+- **Tarball:** verificado contra su manifiesto, con la suite completa corrida sobre lo extraído.
+
+### Capturas ([`capturas_0_13_008/`](capturas_0_13_008/))
+
+| Archivo | Qué muestra |
+|---|---|
+| `00_estados_carretes_corazon.png` | Los ocho estados del LCD: Ready, símbolos, carretes y corazón |
+| `11_media_anim_leyendas_2x.png` | Leyendas del Media Anim |
 
 ## 0.13.005 — DITHER con BYPASS; carretes y corazón según el estado
 
