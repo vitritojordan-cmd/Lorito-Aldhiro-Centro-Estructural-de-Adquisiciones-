@@ -1,4 +1,4 @@
-# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran) → 0.11.012 (Medidor de Intensidad de Señal LCD)
+# Entrega — Lorito Aldhiro 0.11.001 → 0.11.007 (Órdenes Golden) → 0.11.008 (pieles SVG) → 0.11.009 (LCD en cuadrícula) → 0.11.010 (LCD: overlays de CRAC) → 0.11.011 (LCD para Lorito: carretes que giran) → 0.11.012 (Medidor de Intensidad de Señal LCD) → 0.11.013 (LCD fusionado)
 
 | Artefacto | SHA-256 |
 |---|---|
@@ -8,7 +8,8 @@
 | `lorito_aldhiro_v0_11_009_golden_0.11.tar.gz` (+ LCD Display en cuadrícula angular) | `48d2958e1499f83ea7c8d8bd1f43de16a9ac729ba69d0a2ef3656fbfc90e8b10` |
 | `lorito_aldhiro_v0_11_010_golden_0.11.tar.gz` (+ leyendas centradas, celdas PREVI/TAU/COSANI/EXPORT, overlays del VFD de CRAC, carretes, fuente alarm clock) | `3f3bddb6e4149079a1d119c5d71fd9008e9b18e9b748d15e0e4473e7bffda319` |
 | `lorito_aldhiro_v0_11_011_golden_0.11.tar.gz` (+ overlays solo de Lorito, letra fija, carretes vectoriales que giran, corazón, hubs retirados) | `eb3bdc6e50b92d0173298a86d156841c899bb731ca3625e01e4c4c6c54a26ad7` |
-| `lorito_aldhiro_v0_11_012_golden_0.11.tar.gz` (**vigente**: + Medidor de Intensidad de Señal LCD en lugar de la onda bamboleante) | `98d68dbbaa8c1dc5257a443b5a25d8c8eeeeea77f85880a32e7ac0cbac1a1d79` |
+| `lorito_aldhiro_v0_11_012_golden_0.11.tar.gz` (+ Medidor de Intensidad de Señal LCD en lugar de la onda bamboleante) | `98d68dbbaa8c1dc5257a443b5a25d8c8eeeeea77f85880a32e7ac0cbac1a1d79` |
+| `lorito_aldhiro_v0_11_013_golden_0.11.tar.gz` (**vigente**: + LCD fusionado, el medidor bajo el mismo cobertor vítreo; banner canónico en los módulos nuevos) | `d7af72316a8019a04cd94e23a298a1bee93909fac6b07a503998c765f9e3c860` |
 
 El tarball nuevo es un snapshot íntegro del árbol, con raíz plana como el de
 partida y sin bytecode. Aplica las cinco órdenes adjuntas, todas con NO-GO
@@ -164,3 +165,26 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
   - El tarball extraído también pasa el manifiesto y la batería completa.
 - **Capturas:** en [`capturas_0_11_012/`](capturas_0_11_012/). Detalle
   técnico en `gaps/GAP-086.md`, dentro del tarball.
+
+## 0.11.013 — LCD Display fusionado y banner canónico
+
+- **Todo el LCD es una sola pantalla.** La celda del Medidor de Intensidad
+  de Señal ya no tiene fondo amarillo propio ni queda fuera del vidrio.
+  - Sus barras son tinta del LCD sobre la misma pantalla ámbar con matriz
+    que el contómetro.
+  - El mismo cobertor vítreo las cubre.
+  - Motor, balística y estados no cambian.
+- **Banner canónico** ("LORITO ALDHIRO DE REGISTROS ALTERNATIVOS C.E.A",
+  concepto y lorito) en los 30 módulos nuevos de la serie 0.11:
+  - 5 del paquete;
+  - el `__init__` de telemetría;
+  - 14 pruebas;
+  - 10 herramientas.
+
+  Una prueba nueva (`test_module_banners`) lo exige de ahora en adelante.
+- **Verificación:**
+  - 833/833 pruebas, en plano y con `-W error::ResourceWarning`.
+  - 37/37 pruebas con Qt real.
+  - El tarball extraído pasa el manifiesto y la batería completa.
+- **Capturas:** en [`capturas_0_11_013/`](capturas_0_11_013/). Detalle en
+  `gaps/GAP-087.md`, dentro del tarball.
