@@ -230,7 +230,6 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
   - Firma de QA.
 - **Detalle:** `PREVI_NR_SERVO_GOLDEN.md` y `gaps/GAP-088.md`, dentro del tarball.
 
-
 ## 0.11.015 — Avance rápido y rebobinado
 
 - **Botones nuevos:** ◀◀ REBOBINADO y ▶▶ AVANCE RÁPIDO en el transporte principal, a los lados de PLAY. El orden queda así: REC · PAUSA · STOP · ◀◀ · ▶ · ▶▶ · SALIDA.
@@ -241,3 +240,5 @@ Detalle técnico: `CHANGELOG.md` [079]–[084] y `gaps/GAP-076.md`…`GAP-081.md
   - Durante la grabación están deshabilitados.
 - **Verificación:** 895/895 pruebas en plano y con `-W error::ResourceWarning`, y 52/52 con Qt real. El tarball extraído pasa el manifiesto y la batería completa.
 - **Capturas:** en [`capturas_0_11_015/`](capturas_0_11_015/). Detalle en `gaps/GAP-089.md`.
+
+> La línea continúa en [`ENTREGA_LORITO_ALDHIRO_0_12.md`](ENTREGA_LORITO_ALDHIRO_0_12.md) (0.12.001).
