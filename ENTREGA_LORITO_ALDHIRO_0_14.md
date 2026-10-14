@@ -1,15 +1,51 @@
-# Entrega — Lorito Aldhiro 0.14.002
+# Entrega — Lorito Aldhiro 0.14.003
 
 *Lorito Aldhiro. Powered by Carola Records Aldhira Capture CRAC*
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_14_003_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_003_golden_0.14.tar.gz) — árbol completo 0.14.003 (fuentes, pruebas, herramientas, documentación, legado) | `203d988a5923e3ed9146a087397d6fe5608e6afcbbb9a63921a3ceb62427af12` |
+| [`lorito_aldhiro_v0_14_003_runtime.tar.gz`](lorito_aldhiro_v0_14_003_runtime.tar.gz) — paquete de producción 0.14.003 | `fbc05671f9c64ca743461c11bff968db541bad71a290f2d63270e2312a7f11c9` |
 | [`lorito_aldhiro_v0_14_002_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_002_golden_0.14.tar.gz) — árbol completo 0.14.002 (fuentes, pruebas, herramientas, documentación, legado) | `fff18cfec6e380e5e72cc25c765e21b1b9c169ad7866dd017f38ddd462c7f5ed` |
 | [`lorito_aldhiro_v0_14_002_runtime.tar.gz`](lorito_aldhiro_v0_14_002_runtime.tar.gz) — paquete de producción 0.14.002 | `f0d43146d0dcdecd2a66551e036f5838a3936ed22349109c95683714d392dd9b` |
 | [`lorito_aldhiro_v0_14_001_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_001_golden_0.14.tar.gz) — árbol completo (fuentes, pruebas, herramientas, documentación, legado) | `b569e68d90ce7aad2062d75fa0ba92ff6019cb5c3ef465c50a371feef9c0bbec` |
 | [`lorito_aldhiro_v0_14_001_runtime.tar.gz`](lorito_aldhiro_v0_14_001_runtime.tar.gz) — paquete de producción (solo lo que la aplicación necesita para arrancar) | `88767d403704addb30b406a665bdc1af2207da9cabb6f2787ea9afb390934d25` |
 
 La versión sube a **0.14** con la Orden LA-GOLDEN-CORE-020 (modernización integral del núcleo). La 0.13 quedó cerrada en 0.13.009: ver [`ENTREGA_LORITO_ALDHIRO_0_13.md`](ENTREGA_LORITO_ALDHIRO_0_13.md).
+
+## 0.14.003 — El pre-roll entra en la grabación
+
+### Lo que pediste
+
+"El pre-roll debe entrar en la grabación." Ahora cada grabación empieza con los segundos previos a REC (hasta 15 s), pegados al audio en vivo sin hueco ni solape.
+
+### Lo que se encontró
+
+En 0.14.002 te dije que el pre-roll se rechazaba por la espera de 200 ms. Al corregirlo vi que era peor: **nunca entraba**. El micrófono/línea solo se abría al pulsar REC, así que el buffer de pre-roll nunca recibía audio. Además, se vaciaba dos veces justo antes de grabar. Medido con el camino de REC de 0.14.002: 0 frames de pre-roll en la primera grabación y en la segunda.
+
+### Cómo funciona ahora
+
+- **Escucha en espera:** con Lorito en pantalla, la entrada queda escuchando en espera y solo llena el pre-roll. No graba nada en disco, ni mueve medidores, ni monitoriza.
+- **Al pulsar REC:** la grabación usa ese mismo stream sin reabrirlo. El pre-roll se escribe primero y el audio en vivo sigue a continuación, como una sola cinta.
+- **Siempre lista:** la escucha vuelve a abrirse después de cada STOP y sigue a la frecuencia elegida en MUESTRA. Si REC pide una frecuencia distinta, graba como antes, sin pre-roll.
+- **Cuentas cerradas:** el pre-roll cuenta como audio recibido, así que la integridad y la deriva no dan falsas alarmas. El log anota "Pre-roll: N s antepuestos a la grabación".
+- **A tener en cuenta:** con Lorito abierto, la entrada de audio queda ocupada. Otra aplicación que la pida en exclusiva no podrá usarla.
+
+### Pruebas
+
+- **Suite completa:** 1134 pruebas OK (96 omitidas), con 0 ResourceWarning.
+- **Qt real:** 335 pruebas, en 3 corridas OK. En la verificación del tarball, 1 corrida tuvo la falla de tiempo de TAU ya anotada en GAP-094 (previa, aparece en 0.14.001 igual).
+- **Nuevas:** 9 pruebas (`tests/test_preroll_standby.py`). Usan un stream que numera cada muestra y comprueban que el archivo sea una sola rampa continua del pre-roll al audio en vivo, con la contabilidad cerrada.
+- **Tarball:** verificado contra su manifiesto, con la suite completa corrida sobre lo extraído.
+- **Paquete de producción:** reproducible.
+- **Escáner de referencias:** 0 violaciones.
+
+### Pendiente
+
+- Probarlo con equipo de audio real. Las pruebas usan un stream simulado, pero el camino (callback, ring, drenado, disco) es el real.
+- El pre-roll dura 15 s fijos; no hay ajuste en el menú.
+
+Detalle: `gaps/GAP-095.md` y `saneamiento_0_14_003/TEST_REPORT_0.14.003.md`.
 
 ## 0.14.002 — Interfaz desacoplada de los motores; estado de sesión con un solo dueño
 
