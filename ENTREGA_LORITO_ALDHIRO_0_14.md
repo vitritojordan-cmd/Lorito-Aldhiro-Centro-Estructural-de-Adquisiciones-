@@ -1,9 +1,11 @@
-# Entrega — Lorito Aldhiro 0.14.006
+# Entrega — Lorito Aldhiro 0.14.007
 
 *Lorito Aldhiro. Powered by Carola Records Aldhira Capture CRAC*
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_14_007_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_007_golden_0.14.tar.gz) — árbol completo 0.14.007 (fuentes, pruebas, herramientas, documentación, legado) | `f1353a36e58aacc69b740c8c9cdcda03267b5918a69d4a596ee058038466d0b7` |
+| [`lorito_aldhiro_v0_14_007_runtime.tar.gz`](lorito_aldhiro_v0_14_007_runtime.tar.gz) — paquete de producción 0.14.007 | `8a8fafdd43a2872c85fede5fcacec6c62a224c0a7b22199c89b86f1f7acb695b` |
 | [`lorito_aldhiro_v0_14_006_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_006_golden_0.14.tar.gz) — árbol completo 0.14.006 (fuentes, pruebas, herramientas, documentación, legado) | `2bcb5a7d75a3dabfd95d0d1fdb068a06938efc2f5a1bd72e7ce0742f42ab16a4` |
 | [`lorito_aldhiro_v0_14_006_runtime.tar.gz`](lorito_aldhiro_v0_14_006_runtime.tar.gz) — paquete de producción 0.14.006 | `3176395c471974f474f6d622bed504e3905814b4604c1fb6ff265fe010c7e9fc` |
 | [`lorito_aldhiro_v0_14_005_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_005_golden_0.14.tar.gz) — árbol completo 0.14.005 (fuentes, pruebas, herramientas, documentación, legado) | `17db7d15afe701f45ee683a89eb50341aabe9164fd9ad51ed8f716e636de6d29` |
@@ -18,6 +20,74 @@
 | [`lorito_aldhiro_v0_14_001_runtime.tar.gz`](lorito_aldhiro_v0_14_001_runtime.tar.gz) — paquete de producción (solo lo que la aplicación necesita para arrancar) | `88767d403704addb30b406a665bdc1af2207da9cabb6f2787ea9afb390934d25` |
 
 La versión sube a **0.14** con la Orden LA-GOLDEN-CORE-020 (modernización integral del núcleo). La 0.13 quedó cerrada en 0.13.009: ver [`ENTREGA_LORITO_ALDHIRO_0_13.md`](ENTREGA_LORITO_ALDHIRO_0_13.md).
+
+## 0.14.007 — Loro Central Boss (Orden LA-KRN-LCB-001)
+
+Un núcleo coordinador dentro de Lorito: no es el kernel del sistema operativo y no pide permisos de administrador. **Coordina; los motores Golden siguen procesando.**
+
+### Qué hace
+
+- **Estado del sistema:** LISTO, CAPTURANDO, PAUSADO, DETENIENDO, DRENANDO, FINALIZANDO, REPRODUCIENDO, DEGRADADO y ERROR.
+  - Refleja la captura, que sigue siendo la autoridad.
+  - Una orden inválida para el estado se rechaza con motivo; por ejemplo, cambiar la entrada mientras se graba.
+- **Planificador de trabajos de fondo:**
+  - la exportación ya pasa por él;
+  - con la captura o la reproducción activas, solo corre un trabajo a la vez;
+  - la cancelación es cooperativa: nunca se corta un archivo a medio cerrar.
+- **Dispositivos:**
+  - concesión explícita del dispositivo de entrada;
+  - **la captura graba del dispositivo concedido**;
+  - si el dispositivo se pierde, se declara; nunca se cambia a otro.
+- **Salud:**
+  - CPU, RAM, presión del sistema, disco libre y estado de la captura, cada una con su unidad y su fuente;
+  - lo que el equipo no informa (por ejemplo, la temperatura) se muestra como "no disponible", nunca inventado;
+  - muestrea cada 1 s con audio y cada 5 s en reposo.
+- **Recuperación:**
+  - si falla un motor auxiliar, se aísla y la captura sigue;
+  - si falla la captura (entrada, disco lleno, dispositivo), se hace la parada segura: detener, drenar, sincronizar, cerrar y verificar en disco;
+  - nunca reinicia Lorito ni reanuda sola una captura.
+- **Diagnóstico:** HOST → "DIAGNÓSTICO LORO CENTRAL BOSS…".
+
+### Fallos reales que encontré al levantar la línea base (y corregí)
+
+- **Cambio de dispositivo sin aviso.** Si tu interfaz se desconectaba y el sistema cambiaba el dispositivo predeterminado, la recuperación automática podía seguir grabando de OTRO dispositivo (por ejemplo, el micrófono interno) sin avisar. Ahora reabre solo el mismo.
+- **Captura caída sin aviso.** Si la captura fallaba, la ventana seguía mostrando "grabando": el motor cerraba la sesión, pero nadie avisaba. Ahora el fallo aparece en pantalla y en el diagnóstico.
+- **Escucha en espera sin vigilar.** Si el stream del pre-roll moría, nadie lo notaba.
+- **Riesgos en los callbacks de audio:**
+  - el monitor fallaba con bloques grandes;
+  - TAU llamaba a la interfaz desde el hilo de audio.
+- **Logs síncronos.** Los registros se escribían a disco en el mismo hilo que los generaba; ahora van por una cola.
+
+### Banco antes/después
+
+Misma señal, motor real, sin y con Kernel, 6 rondas intercaladas:
+
+- **Audio grabado:** idéntico bit a bit; sin pérdidas.
+- **Callback:** mediana y p99,9 equivalentes.
+- **Cola alta:** diferencia pequeña y no concluyente (5 picos de más de 5 ms en 18 000 con Kernel, frente a 1 sin él; en el control, 0 frente a 1). Se debe medir con tu PortAudio real.
+- **Umbrales:** ninguno se declara aprobado.
+
+### Pruebas
+
+- **Suite completa:** 1253 pruebas OK, con 0 ResourceWarning.
+- **Qt real:** 448 pruebas, en 3 corridas OK.
+- **Nuevas:** 48 pruebas del Kernel.
+- **Tarball:** verificado contra su manifiesto, con la suite corrida sobre el árbol extraído.
+- **Paquete de producción:** reproducible.
+- **Escáner de referencias:** 0 violaciones.
+- **Grafo de imports:** sin ciclos.
+
+### Pendiente (Fase 6 de la orden, en tu equipo)
+
+- Captura continua de 50 h.
+- Matriz de dispositivos con hardware real.
+- Umbrales definitivos a partir de la línea base medida.
+- Firmas de QA, audio e ingeniería.
+- Concesiones de las salidas de audio (monitor, reproducción, bobinado y TAU).
+
+**Reversión inmediata:** arrancar con `LORITO_LCB=0`.
+
+**Detalle:** `LORO_CENTRAL_BOSS.md`, `gaps/GAP-099.md` y `saneamiento_0_14_007/`.
 
 ## 0.14.006 — DSP destructivos: la captura graba el audio ya procesado
 
