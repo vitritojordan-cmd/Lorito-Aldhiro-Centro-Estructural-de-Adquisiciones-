@@ -2,12 +2,31 @@
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_13_009_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_009_golden_0.13.tar.gz) | `85e54dd7e04b0550003563e0f2c30464babfb34f6c021faff773baacefab8753` |
 | [`lorito_aldhiro_v0_13_008_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_008_golden_0.13.tar.gz) | `bd0b6f07ab24fd6d693d74a18c4681e3a34668358c70632a0aa7dc2d8d136976` |
 | [`lorito_aldhiro_v0_13_005_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_005_golden_0.13.tar.gz) | `a7f2488476fa621f21438270880d06850d63c74c9807da5b4cd81274e7cf7b4b` |
 | [`lorito_aldhiro_v0_13_004_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_004_golden_0.13.tar.gz) | `721211148630fee75e3a2c8ef95325af462ded5999e083aa0d5018cd8b773fc2` |
 | [`lorito_aldhiro_v0_13_001_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_001_golden_0.13.tar.gz) | `34209c74dde34a791220628d95c5ee20898c546e369962d5c5d5383e526c7f4d` |
 
 La versión sube a **0.13** al cerrar la Orden LA-GOLDEN-VIEW-SIGSEGV-019. La 0.12 quedó concluida antes de empezar, como se pidió; está en [`ENTREGA_LORITO_ALDHIRO_0_12.md`](ENTREGA_LORITO_ALDHIRO_0_12.md).
+
+## 0.13.009 — Contómetro sin engrosamiento
+
+- **Qué se corrigió:** las letras del contómetro principal y de todos sus overlays ("Ready", "Ff Wd > X1", "Fnc No Disp"…) se veían engrosadas.
+- **Causa:** la fuente del reloj (`alarm clock.ttf`) trae un solo grosor, pero se la pedía en negrita. Qt fabricaba esa negrita corriendo cada letra un poco hacia la derecha: los trazos engordaban y se tapaba la separación entre segmentos.
+- **Ahora:** se usa el grosor real de la fuente. Los segmentos se ven finos y separados, como en un display de reloj.
+
+### Pruebas
+
+- **Suite completa:** 1066/1066, con 0 ResourceWarning.
+- **Qt real:** 267/267.
+- **Tarball:** verificado contra su manifiesto, con la suite completa corrida sobre lo extraído.
+
+### Capturas ([`capturas_0_13_009/`](capturas_0_13_009/))
+
+| Archivo | Qué muestra |
+|---|---|
+| `12_contometro_peso_antes_despues.png` | Antes y después, en el tiempo, en "Ready" y en un overlay |
 
 ## 0.13.008 — "Ready" como CRAC, símbolos de transporte en el LCD y leyendas del Media Anim
 
