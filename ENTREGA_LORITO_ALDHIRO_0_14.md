@@ -1,13 +1,61 @@
-# Entrega — Lorito Aldhiro 0.14.001
+# Entrega — Lorito Aldhiro 0.14.002
 
 *Lorito Aldhiro. Powered by Carola Records Aldhira Capture CRAC*
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_14_002_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_002_golden_0.14.tar.gz) — árbol completo 0.14.002 (fuentes, pruebas, herramientas, documentación, legado) | `fff18cfec6e380e5e72cc25c765e21b1b9c169ad7866dd017f38ddd462c7f5ed` |
+| [`lorito_aldhiro_v0_14_002_runtime.tar.gz`](lorito_aldhiro_v0_14_002_runtime.tar.gz) — paquete de producción 0.14.002 | `f0d43146d0dcdecd2a66551e036f5838a3936ed22349109c95683714d392dd9b` |
 | [`lorito_aldhiro_v0_14_001_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_001_golden_0.14.tar.gz) — árbol completo (fuentes, pruebas, herramientas, documentación, legado) | `b569e68d90ce7aad2062d75fa0ba92ff6019cb5c3ef465c50a371feef9c0bbec` |
 | [`lorito_aldhiro_v0_14_001_runtime.tar.gz`](lorito_aldhiro_v0_14_001_runtime.tar.gz) — paquete de producción (solo lo que la aplicación necesita para arrancar) | `88767d403704addb30b406a665bdc1af2207da9cabb6f2787ea9afb390934d25` |
 
 La versión sube a **0.14** con la Orden LA-GOLDEN-CORE-020 (modernización integral del núcleo). La 0.13 quedó cerrada en 0.13.009: ver [`ENTREGA_LORITO_ALDHIRO_0_13.md`](ENTREGA_LORITO_ALDHIRO_0_13.md).
+
+## 0.14.002 — Interfaz desacoplada de los motores; estado de sesión con un solo dueño
+
+Continúa la Orden LA-GOLDEN-CORE-020 con lo que había quedado pendiente en 0.14.001.
+
+### Lo que pediste
+
+- **Interfaz desacoplada de los motores.** La interfaz ya no importa los motores: los pide a una capa de servicios (`backend/services`). Cada servicio tiene un contrato con exactamente lo que la interfaz usa, y una prueba falla si la interfaz usa algo fuera del contrato o toca piezas privadas de un motor.
+  - Aristas directas interfaz → motores: de 132 (en 16 módulos) a 4, todas en el parche de diagnóstico, que audita esas clases a propósito.
+  - Piezas privadas de motores usadas por la interfaz: de 15 a 0.
+  - Nombres importados sin uso en la interfaz: de 1.536 a 0.
+- **Objetos globales retirados o con dueño único.** El estado global de sesión se retiró. El guardián de crash, los snapshots, el registro de clips, el forense de xruns y el nuevo vigilante de RAM se reciben de la raíz de composición (`build_app_services()`), no de variables globales.
+
+### Lo que se encontró y se corrigió
+
+- **Estado de sesión partido en dos (defecto real, desde la modularización).** El motor contaba frames y xruns en su objeto, y la interfaz leía otro objeto global que nadie actualizaba. Con audio real:
+  - el snapshot periódico de sesión no se guardaba nunca;
+  - aparecía un aviso falso de deriva ("LORITO VIO UNA DERIVA") en cada grabación;
+  - la exportación comparaba 0 con 0 en su chequeo de integridad.
+
+  Medido con 10 s grabados: antes −10000 ms de deriva y sin snapshot; ahora −0,2 ms y con snapshot.
+- **Prioridad de tiempo real aplicada al hilo equivocado:** se retiró la llamada (el hilo de drenado ya fija la suya).
+- **Dos guardas de SIPA muertas:** leían campos que ya no existen; se retiraron.
+- **Eventos TAU:** se identificaban con `id()`, que Python reutiliza; ahora llevan un contador único.
+- **Vigilante de RAM:** la memoria es del proceso, no de una ventana. Al mover el estado de sesión al motor quedaba uno por ventana y cada ventana repetía la limpieza de emergencia de memoria en el hilo de la interfaz. Ahora hay un solo vigilante por proceso.
+
+### Decisión tuya pendiente: pre-roll
+
+Al empezar a grabar, Lorito espera 200 ms antes de intentar meter el pre-roll. Para entonces ya hay audio en vivo en cola, y el pre-roll se rechaza casi siempre ("Pre-roll rechazado: ya hay audio en vivo encolado"). No se cambió, porque cambiarlo altera qué audio queda en el RAW. Detalle en `gaps/GAP-094.md` §4.
+
+### Pruebas
+
+- **Suite completa:** 1125 pruebas OK (96 omitidas: necesitan Qt real o hardware), con 0 ResourceWarning.
+- **Qt real:** 326 pruebas, en 3 corridas: 2 limpias y 1 con una prueba de tiempo de TAU fuera de tolerancia. Esa prueba falla igual (1 de cada 6 corridas) en 0.14.001: es previa y queda anotada en GAP-094.
+- **Nuevas:** 18 pruebas (`tests/test_core_servicios.py`): dueño del estado de sesión, contratos, capa de servicios, tokens TAU y vigilante de RAM.
+- **Tarball:** verificado contra su manifiesto, con la suite completa corrida sobre lo extraído.
+- **Paquete de producción:** reproducible (dos construcciones dan el mismo SHA-256).
+- **Escáner de referencias:** 0 violaciones.
+
+### Lo que queda pendiente
+
+- Sesión larga con hardware de audio real y revisión en otra máquina. Por eso la certificación Golden completa sigue sin declararse.
+- Dentro del núcleo, los objetos globales siguen existiendo en sus módulos; la interfaz solo los alcanza por la capa de servicios.
+- `ACERCA` sigue en "Fnc No Disp" hasta que estén el logo y los créditos.
+
+Informe completo: `saneamiento_0_14_002/TEST_REPORT_0.14.002.md`, `gaps/GAP-094.md` y `MODERNIZACION_NUCLEO_GOLDEN.md` §1 y §9.
 
 ## 0.14.001 — Núcleo autónomo; CRAC como referencia histórica
 
