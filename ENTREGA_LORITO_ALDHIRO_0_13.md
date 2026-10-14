@@ -8,6 +8,8 @@
 | [`lorito_aldhiro_v0_13_004_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_004_golden_0.13.tar.gz) | `721211148630fee75e3a2c8ef95325af462ded5999e083aa0d5018cd8b773fc2` |
 | [`lorito_aldhiro_v0_13_001_golden_0.13.tar.gz`](lorito_aldhiro_v0_13_001_golden_0.13.tar.gz) | `34209c74dde34a791220628d95c5ee20898c546e369962d5c5d5383e526c7f4d` |
 
+La 0.13 quedó cerrada en 0.13.009; la siguiente entrega es [`ENTREGA_LORITO_ALDHIRO_0_14.md`](ENTREGA_LORITO_ALDHIRO_0_14.md).
+
 La versión sube a **0.13** al cerrar la Orden LA-GOLDEN-VIEW-SIGSEGV-019. La 0.12 quedó concluida antes de empezar, como se pidió; está en [`ENTREGA_LORITO_ALDHIRO_0_12.md`](ENTREGA_LORITO_ALDHIRO_0_12.md).
 
 ## 0.13.009 — Contómetro sin engrosamiento
