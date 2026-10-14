@@ -1,9 +1,11 @@
-# Entrega — Lorito Aldhiro 0.14.005
+# Entrega — Lorito Aldhiro 0.14.006
 
 *Lorito Aldhiro. Powered by Carola Records Aldhira Capture CRAC*
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_14_006_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_006_golden_0.14.tar.gz) — árbol completo 0.14.006 (fuentes, pruebas, herramientas, documentación, legado) | `2bcb5a7d75a3dabfd95d0d1fdb068a06938efc2f5a1bd72e7ce0742f42ab16a4` |
+| [`lorito_aldhiro_v0_14_006_runtime.tar.gz`](lorito_aldhiro_v0_14_006_runtime.tar.gz) — paquete de producción 0.14.006 | `3176395c471974f474f6d622bed504e3905814b4604c1fb6ff265fe010c7e9fc` |
 | [`lorito_aldhiro_v0_14_005_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_005_golden_0.14.tar.gz) — árbol completo 0.14.005 (fuentes, pruebas, herramientas, documentación, legado) | `17db7d15afe701f45ee683a89eb50341aabe9164fd9ad51ed8f716e636de6d29` |
 | [`lorito_aldhiro_v0_14_005_runtime.tar.gz`](lorito_aldhiro_v0_14_005_runtime.tar.gz) — paquete de producción 0.14.005 | `54910ee8d44cb6ee71e72c99557e550e7eec21e823fe79ae0dbaf4fd807d9a92` |
 | [`lorito_aldhiro_v0_14_004_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_004_golden_0.14.tar.gz) — árbol completo 0.14.004 (fuentes, pruebas, herramientas, documentación, legado) | `0f5b219a1d45eaf8f486f293360bf499509debfbc4bbfb2e11a8f3096868e8c0` |
@@ -16,6 +18,42 @@
 | [`lorito_aldhiro_v0_14_001_runtime.tar.gz`](lorito_aldhiro_v0_14_001_runtime.tar.gz) — paquete de producción (solo lo que la aplicación necesita para arrancar) | `88767d403704addb30b406a665bdc1af2207da9cabb6f2787ea9afb390934d25` |
 
 La versión sube a **0.14** con la Orden LA-GOLDEN-CORE-020 (modernización integral del núcleo). La 0.13 quedó cerrada en 0.13.009: ver [`ENTREGA_LORITO_ALDHIRO_0_13.md`](ENTREGA_LORITO_ALDHIRO_0_13.md).
+
+## 0.14.006 — DSP destructivos: la captura graba el audio ya procesado
+
+### ¿Había camino post-destructivo?
+
+No. La exportación de Lorito no aplica DSP: no existe un journal como el de Pañalissu 4 que los aplique al exportar. Por eso tu orden se aplicó.
+
+### Cómo queda
+
+- **Durante la captura:** cada bloque pasa por la cadena DSP y se escribe la **toma procesada**.
+  - Queda alineada frame a frame con lo que entró: se compensa la latencia de 256 frames de la cadena.
+  - Es continua: si un DSP falla en un bloque, ese tramo entra sin procesar, sin hueco ni salto.
+- **Al vaciar el búfer:** la sesión sigue con la toma procesada. Reproducción, onda y exportación ya usan el audio con los DSP aplicados.
+  - Si ningún DSP actuó, se usa el audio sin procesar y no queda una copia duplicada.
+- **Monitor en vivo:** durante la captura escuchas la señal procesada, lo que queda grabado. En pausa vuelve la escucha directa.
+- **Reproducción:** ya no aplica la cadena por encima. La toma ya trae los DSP, y aplicarlos otra vez los duplicaría. Esto reemplaza lo de 0.14.004, donde los DSP se oían al reproducir pero no llegaban a la exportación.
+- **Respaldo:** el audio original sin procesar se sigue guardando intacto junto a la toma.
+
+### A tener en cuenta
+
+- **EQ/BIAS:** al terminar una captura queda encendido en NORMAL (tu regla de 0.14.004). Por eso la captura siguiente también sale procesada por EQ/BIAS NORMAL, salvo que lo apagues antes de grabar.
+- **DSP fuera de captura:** encender un DSP al reproducir o en reposo lo deja armado para la próxima captura.
+- **Cierre abrupto:** si el programa se cierra de golpe a mitad de una captura, la recuperación al arrancar trae el audio sin procesar.
+
+### Pruebas
+
+- **Suite completa:** 1204 pruebas OK (106 omitidas), con 0 ResourceWarning.
+- **Qt real:** 400 pruebas, en 3 corridas OK.
+- **Nuevas:** 14.
+- **Ventana real:** grabar con EQ/BIAS METAL y MPX deja la sesión en la toma procesada, con la misma duración que el original.
+- **Regresión de la validación:** hubo un caso en que el cierre quedaba esperando 30 s. Quedó corregido y probado.
+- **Tarball:** verificado contra su manifiesto, con la suite corrida sobre el árbol extraído.
+- **Paquete de producción:** reproducible.
+- **Escáner de referencias:** 0 violaciones.
+
+Detalle: `gaps/GAP-098.md` y `saneamiento_0_14_006/TEST_REPORT_0.14.006.md`.
 
 ## 0.14.005 — Corazón del Lorito
 
