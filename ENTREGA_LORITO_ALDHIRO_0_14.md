@@ -1,9 +1,11 @@
-# Entrega — Lorito Aldhiro 0.14.003
+# Entrega — Lorito Aldhiro 0.14.004
 
 *Lorito Aldhiro. Powered by Carola Records Aldhira Capture CRAC*
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_14_004_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_004_golden_0.14.tar.gz) — árbol completo 0.14.004 (fuentes, pruebas, herramientas, documentación, legado) | `0f5b219a1d45eaf8f486f293360bf499509debfbc4bbfb2e11a8f3096868e8c0` |
+| [`lorito_aldhiro_v0_14_004_runtime.tar.gz`](lorito_aldhiro_v0_14_004_runtime.tar.gz) — paquete de producción 0.14.004 | `a0e9b6d20481480740fb858bffe49e60aaea58f45847d738f4cbb4c4f07d2de8` |
 | [`lorito_aldhiro_v0_14_003_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_003_golden_0.14.tar.gz) — árbol completo 0.14.003 (fuentes, pruebas, herramientas, documentación, legado) | `203d988a5923e3ed9146a087397d6fe5608e6afcbbb9a63921a3ceb62427af12` |
 | [`lorito_aldhiro_v0_14_003_runtime.tar.gz`](lorito_aldhiro_v0_14_003_runtime.tar.gz) — paquete de producción 0.14.003 | `fbc05671f9c64ca743461c11bff968db541bad71a290f2d63270e2312a7f11c9` |
 | [`lorito_aldhiro_v0_14_002_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_002_golden_0.14.tar.gz) — árbol completo 0.14.002 (fuentes, pruebas, herramientas, documentación, legado) | `fff18cfec6e380e5e72cc25c765e21b1b9c169ad7866dd017f38ddd462c7f5ed` |
@@ -12,6 +14,51 @@
 | [`lorito_aldhiro_v0_14_001_runtime.tar.gz`](lorito_aldhiro_v0_14_001_runtime.tar.gz) — paquete de producción (solo lo que la aplicación necesita para arrancar) | `88767d403704addb30b406a665bdc1af2207da9cabb6f2787ea9afb390934d25` |
 
 La versión sube a **0.14** con la Orden LA-GOLDEN-CORE-020 (modernización integral del núcleo). La 0.13 quedó cerrada en 0.13.009: ver [`ENTREGA_LORITO_ALDHIRO_0_13.md`](ENTREGA_LORITO_ALDHIRO_0_13.md).
+
+## 0.14.004 — Tus fallos: exportación, overlays, parpadeo, DSP, bobinado y LCD
+
+### Lo que se corrigió
+
+- **Exportación imposible y botones muertos.**
+  - **Causa:** LORITO EXPORTADOR tomaba prestados los selectores de códec y profundidad de la ventana y, al cerrarse, no los devolvía; Qt los destruía con el diálogo.
+  - **Efecto:** desde ese momento cada botón que los consultaba fallaba. Ese era el "Internal C++ object already deleted" de tus trazas.
+  - **Arreglo:** ahora los devuelve al cerrarse, por cualquier vía (INICIAR, ABORTAR o Esc).
+- **"Stream muerto (53317.7 s)".** REC podía arrancar mientras la sesión anterior aún se cerraba. El vigilante viejo leía un contador puesto a cero y calculaba el tiempo "sin callbacks" desde el arranque del equipo. Ahora REC espera a que esa sesión termine.
+- **Primer SIPA:** muestra "SIPActiV" y entra en el modo de espera completo.
+- **"VaccUm TP":** se ve fijo mientras se vacía el búfer.
+- **Parpadeo:** un solo reloj de 480 ms marca la fase del LCD, los paneles de log y duración y la PC. La pausa manual ahora parpadea al mismo ritmo.
+- **DSP que no se oían.**
+  - **Reproducción:** ahora suena con la cadena DSP, como en CRAC. Muscle EQ Samir o cualquier DSP se oye al activarlo.
+  - **Monitor de captura:** sigue sin DSP, igual que en CRAC.
+- **Reglas de DSP:**
+  - **PREVI:** son excluyentes con los demás procesadores; EQ/BIAS es el único que convive con ellos. Un rechazo muestra el motivo y Fnc No Disp.
+  - **Al detener una captura:** se apaga todo menos EQ/BIAS, que conmuta a NORMAL.
+  - **Leyenda "DSP":** la encienden solo los DSP sin leyenda propia (Versión O Tron y HX Pro).
+- **Overlays:** CristhPrevi, LuchiPrevi, LoliPrevi y VoT AA-MO. Para los otros modos de O Tron: "VoT Barril" y "VoT Sifón".
+- **Controles inhibidos:** un clic sobre un botón o scrub deshabilitado muestra Fnc No Disp.
+- **Botón fantasma:** el selector diminuto de profundidad de bits que aparecía en la esquina superior izquierda ya no se ve; solo vive dentro de LORITO EXPORTADOR.
+- **FF/REW con sonido:**
+  - se oye la cinta acelerada a la velocidad real del motor (×8 a ×32), al derecho al avanzar y en reversa al rebobinar;
+  - suena a −6 dB, con fundidos;
+  - si no hay salida de audio, sigue mudo.
+- **Columna derecha del LCD:** usaba letra más chica que la izquierda en celdas más angostas. Ahora las dos columnas miden lo mismo y usan la misma letra. Capturas en [`capturas_0_14_004/`](capturas_0_14_004/).
+
+### Pruebas
+
+- **Suite completa:** 1171 pruebas OK (105 omitidas), con 0 ResourceWarning.
+- **Qt real:** 367 pruebas, en 4 corridas OK.
+- **Nuevas:** 38 pruebas para estos arreglos.
+- **Pruebas viejas actualizadas:** las que comprobaban el comportamiento que pediste cambiar.
+- **Tarball:** verificado contra su manifiesto.
+- **Paquete de producción:** reproducible.
+- **Escáner de referencias:** 0 violaciones.
+
+### Pendiente
+
+- **Desbordamiento de tu primera traza:** no lo reproduje (el búfer llega como mucho al 11 %). Tu log muestra saltos de hasta 750 ms, lo que apunta a carga del equipo. Hay que verlo con tu hardware.
+- **Aviso de Wayland:** el de los menús desplegables, es cosmético y quedó sin tocar.
+
+Detalle: `gaps/GAP-096.md` y `saneamiento_0_14_004/TEST_REPORT_0.14.004.md`.
 
 ## 0.14.003 — El pre-roll entra en la grabación
 
