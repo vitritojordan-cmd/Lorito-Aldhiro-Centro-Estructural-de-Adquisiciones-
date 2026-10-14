@@ -19,6 +19,8 @@
 | [`lorito_aldhiro_v0_14_001_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_001_golden_0.14.tar.gz) — árbol completo (fuentes, pruebas, herramientas, documentación, legado) | `b569e68d90ce7aad2062d75fa0ba92ff6019cb5c3ef465c50a371feef9c0bbec` |
 | [`lorito_aldhiro_v0_14_001_runtime.tar.gz`](lorito_aldhiro_v0_14_001_runtime.tar.gz) — paquete de producción (solo lo que la aplicación necesita para arrancar) | `88767d403704addb30b406a665bdc1af2207da9cabb6f2787ea9afb390934d25` |
 
+La 0.14 quedó cerrada en 0.14.007; la siguiente entrega es [`ENTREGA_LORITO_ALDHIRO_0_15.md`](ENTREGA_LORITO_ALDHIRO_0_15.md).
+
 La versión sube a **0.14** con la Orden LA-GOLDEN-CORE-020 (modernización integral del núcleo). La 0.13 quedó cerrada en 0.13.009: ver [`ENTREGA_LORITO_ALDHIRO_0_13.md`](ENTREGA_LORITO_ALDHIRO_0_13.md).
 
 ## 0.14.007 — Loro Central Boss (Orden LA-KRN-LCB-001)
