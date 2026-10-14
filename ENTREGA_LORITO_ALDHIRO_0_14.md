@@ -1,9 +1,11 @@
-# Entrega — Lorito Aldhiro 0.14.004
+# Entrega — Lorito Aldhiro 0.14.005
 
 *Lorito Aldhiro. Powered by Carola Records Aldhira Capture CRAC*
 
 | Artefacto | SHA-256 |
 |---|---|
+| [`lorito_aldhiro_v0_14_005_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_005_golden_0.14.tar.gz) — árbol completo 0.14.005 (fuentes, pruebas, herramientas, documentación, legado) | `17db7d15afe701f45ee683a89eb50341aabe9164fd9ad51ed8f716e636de6d29` |
+| [`lorito_aldhiro_v0_14_005_runtime.tar.gz`](lorito_aldhiro_v0_14_005_runtime.tar.gz) — paquete de producción 0.14.005 | `54910ee8d44cb6ee71e72c99557e550e7eec21e823fe79ae0dbaf4fd807d9a92` |
 | [`lorito_aldhiro_v0_14_004_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_004_golden_0.14.tar.gz) — árbol completo 0.14.004 (fuentes, pruebas, herramientas, documentación, legado) | `0f5b219a1d45eaf8f486f293360bf499509debfbc4bbfb2e11a8f3096868e8c0` |
 | [`lorito_aldhiro_v0_14_004_runtime.tar.gz`](lorito_aldhiro_v0_14_004_runtime.tar.gz) — paquete de producción 0.14.004 | `a0e9b6d20481480740fb858bffe49e60aaea58f45847d738f4cbb4c4f07d2de8` |
 | [`lorito_aldhiro_v0_14_003_golden_0.14.tar.gz`](lorito_aldhiro_v0_14_003_golden_0.14.tar.gz) — árbol completo 0.14.003 (fuentes, pruebas, herramientas, documentación, legado) | `203d988a5923e3ed9146a087397d6fe5608e6afcbbb9a63921a3ceb62427af12` |
@@ -14,6 +16,61 @@
 | [`lorito_aldhiro_v0_14_001_runtime.tar.gz`](lorito_aldhiro_v0_14_001_runtime.tar.gz) — paquete de producción (solo lo que la aplicación necesita para arrancar) | `88767d403704addb30b406a665bdc1af2207da9cabb6f2787ea9afb390934d25` |
 
 La versión sube a **0.14** con la Orden LA-GOLDEN-CORE-020 (modernización integral del núcleo). La 0.13 quedó cerrada en 0.13.009: ver [`ENTREGA_LORITO_ALDHIRO_0_13.md`](ENTREGA_LORITO_ALDHIRO_0_13.md).
+
+## 0.14.005 — Corazón del Lorito
+
+Cumple la Orden de Ingeniería "Corazón del Lorito" v1.0: un reloj maestro monotónico que da vida al corazón del LCD.
+
+### Cómo se ve
+
+![Estados del corazón](capturas_0_14_005/corazon_estados.png)
+
+| Estado de la captura | Corazón del LCD |
+|---|---|
+| En reposo, armando o finalizada | atenuado |
+| Grabando | late: un latido por segundo de tiempo grabado, a tamaño completo en el golpe y al 82 % entre golpes |
+| En pausa | parpadea al ritmo del reloj maestro de 480 ms, en fase con carretes y paneles |
+| Error | solo el contorno, sin relleno: no finge estar vivo |
+
+### Qué hay detrás
+
+- **Motor `CorazonEngine`:**
+  - mide con el reloj monotónico del sistema, nunca con la hora del equipo; cambiar la hora no mueve la duración;
+  - las pausas no cuentan;
+  - cada latido tiene un plazo absoluto, así que no acumula deriva.
+- **Una sola autoridad:** el motor de captura. El corazón la sigue y no late hasta que la captura se confirma; si el stream no abre, pasa a error sin haber latido.
+- **Independencia de la pantalla:** la pantalla solo lee la última foto del corazón. Un repintado lento no puede frenar ni alterar la captura.
+- **Ritmo configurable:** 1 latido por segundo por defecto, ajustable entre 250 ms y 10 s.
+
+### Banco
+
+Medido en este contenedor (4 CPU), no en tu equipo.
+
+| | En reposo | Con la CPU ocupada (4 hilos) |
+|---|---|---|
+| Diferencia del tiempo grabado frente a un reloj de referencia, en ~54 s | −1,8 ms (error de medición ±6 ms) | −31 ms (error de medición ±65 ms) |
+| Latidos / esperados | 54 / 54 | 54 / 54 |
+| Retraso de un latido p50 / máx. | 0,3 / 2,2 ms | 5,5 / 54 ms |
+| CPU del corazón | 0,03 % | 0,03 % |
+
+- **50 h simuladas:** tiempo exacto al nanosegundo y memoria estable.
+- **Corrida real:** no se hizo una de 50 h.
+- **Umbral:** ninguno se declara aprobado. Lo fijas tú con el banco en tu equipo:
+
+  ```
+  python tools/corazon/bench_corazon.py --seconds 600 --load 4 --json banco.json
+  ```
+
+### Pruebas
+
+- **Suite completa:** 1190 pruebas OK (106 omitidas), con 0 ResourceWarning.
+- **Qt real:** 386 pruebas, en 3 corridas OK.
+- **Nuevas:** 19, de T-01 a T-10 más el icono.
+- **Tarball:** verificado contra su manifiesto, con la suite corrida sobre el árbol extraído.
+- **Paquete de producción:** reproducible.
+- **Escáner de referencias:** 0 violaciones.
+
+Detalle: `CORAZON_DEL_LORITO.md` (nota técnica e investigación), `gaps/GAP-097.md` (trazabilidad de la orden) y `saneamiento_0_14_005/`.
 
 ## 0.14.004 — Tus fallos: exportación, overlays, parpadeo, DSP, bobinado y LCD
 
